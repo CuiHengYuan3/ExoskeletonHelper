@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+
+
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/line_equment_backgound"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.9"
+
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/suggest_item_top_backgrund"
+                android:gravity="center"
+                android:padding="3dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tx_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="阶段一"
+                    android:textColor="#ffffff"
+                    android:textSize="11.5sp">
+
+                </TextView>
+
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/tx_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="11dp"
+                android:gravity="left"
+                android:text="阶段康复评分："
+                android:textColor="#5b5b5b"
+                android:textSize="11sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:gravity="center"
+                android:text="36"
+                android:textColor="#faf572"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/tx_1"
+                app:layout_constraintLeft_toRightOf="@id/tx_1"
+                app:layout_constraintTop_toTopOf="@id/tx_1">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/tx_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:gravity="left"
+                android:text="测评时间：2020年7月8日"
+                android:textColor="#cccccc"
+                android:textSize="9sp"
+                app:layout_constraintLeft_toLeftOf="@id/tx_1"
+                app:layout_constraintTop_toBottomOf="@id/tx_1">
+
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:gravity="left"
+                android:text="更多结果"
+                android:textColor="#8ad1bb"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/tx_2"
+                app:layout_constraintLeft_toRightOf="@id/tx_2"
+                app:layout_constraintTop_toTopOf="@id/tx_2">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/tx_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="left"
+                android:text="阶段康复目标：恢复40%手指的活动度"
+                android:textColor="#101010"
+                android:textSize="11sp"
+                app:layout_constraintLeft_toLeftOf="@id/tx_2"
+                app:layout_constraintTop_toBottomOf="@id/tx_2"
+
+                >
+
+            </TextView>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:gravity="left"
+                android:text="周期：30天"
+                android:textColor="#5b5b5b"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/tx_3"
+                app:layout_constraintLeft_toRightOf="@id/tx_3"
+                app:layout_constraintTop_toTopOf="@id/tx_3"
+
+                >
+
+
+            </TextView>
+
+
+            <TextView
+                android:id="@+id/tx_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:gravity="left"
+                android:text="详细计划"
+                android:textColor="#5b5b5b"
+                android:textSize="9sp"
+                app:layout_constraintLeft_toLeftOf="@id/tx_3"
+
+                app:layout_constraintTop_toBottomOf="@id/tx_3" />
+
+            <TextView
+                android:id="@+id/tx_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="left"
+                android:text="拇指轻轻弯曲10次"
+                android:textColor="#101010"
+                android:textSize="10sp"
+                app:layout_constraintLeft_toLeftOf="@id/tx_4"
+                app:layout_constraintTop_toBottomOf="@id/tx_4" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="21dp"
+                android:gravity="left"
+                android:text=" x 4组（10天）"
+                android:textColor="#cccccc"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/tx_5"
+                app:layout_constraintLeft_toRightOf="@id/tx_5"
+                app:layout_constraintTop_toTopOf="@id/tx_5" />
+
+            <TextView
+                android:id="@+id/tx_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="left"
+                android:text="其余四指轻轻弯曲10次"
+                android:textColor="#101010"
+                android:textSize="10sp"
+                app:layout_constraintLeft_toLeftOf="@id/tx_5"
+                app:layout_constraintTop_toBottomOf="@id/tx_5" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="21dp"
+                android:gravity="left"
+                android:text=" x 4组（10天）"
+                android:textColor="#cccccc"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/tx_6"
+                app:layout_constraintLeft_toRightOf="@id/tx_6"
+                app:layout_constraintTop_toTopOf="@id/tx_6" />
+
+            <Button
+                style="?android:attr/borderlessButtonStyle"
+
+                android:layout_width="49dp"
+                android:layout_height="19dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/suggestion_button_checked"
+                android:elevation="0dp"
+                android:text="已完成"
+                android:textColor="#cccccc"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tx_6">
+
+            </Button>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

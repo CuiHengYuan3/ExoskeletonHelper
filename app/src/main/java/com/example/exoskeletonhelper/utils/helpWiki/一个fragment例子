@@ -1,0 +1,193 @@
+package com.example.databasecompetition.common
+
+import android.graphics.Color
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.databasecompetition.BaseFragment
+import com.example.databasecompetition.Network
+import com.example.databasecompetition.PdfActivity
+import com.example.databasecompetition.R
+import com.example.databasecompetition.beans.TimeTableBeans
+import com.example.databasecompetition.databinding.FragmentCommentBinding
+import com.example.databasecompetition.detailClass.DetailClassActivity
+import com.example.databasecompetition.detailClass.DetailClassAdapter
+import com.example.utils.myview.MyApplication
+import kotlinx.android.synthetic.main.activity_detail_class.*
+import kotlinx.android.synthetic.main.fragment_comment.*
+import org.jetbrains.anko.support.v4.startActivity
+import q.rorbin.verticaltablayout.VerticalTabLayout
+import q.rorbin.verticaltablayout.adapter.TabAdapter
+import q.rorbin.verticaltablayout.widget.ITabView
+import q.rorbin.verticaltablayout.widget.ITabView.TabIcon
+import q.rorbin.verticaltablayout.widget.ITabView.TabTitle
+import q.rorbin.verticaltablayout.widget.QTabView
+import q.rorbin.verticaltablayout.widget.TabView
+
+
+open class CommentFragment : BaseFragment<FragmentCommentBinding>(), VerticalTabLayout.OnTabSelectedListener {
+
+    private val viewModel by lazy {
+        ViewModelProviders.of(this, Network.getInstance()?.let { CommentFractory(it) })
+            .get(CommonViewModel::class.java)
+    }
+    private val mlayoutManager by lazy {
+        LinearLayoutManager(activity)
+    }
+
+    var majorList: ArrayList<TimeTableBeans.Data>? = ArrayList()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (arguments != null) {
+            majorList = arguments!!.get("majorList") as ArrayList<TimeTableBeans.Data>?
+        }
+    }
+
+//    override fun onCreateView(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View? {
+//        val view = inflater.inflate(R.layout.fragment_comment, container, false)
+//        val binding = DataBindingUtil.bind<FragmentCommentBinding>(view)
+//        binding?.viewModel = viewModel
+//        return view
+//    }
+
+
+//    override fun onActivityCreated(savedInstanceState: Bundle?) {
+//        super.onActivityCreated(savedInstanceState)
+//        initData()
+//        initView()
+//        observe()
+//        viewModel.zyh = majorList?.get(0)?.zyh!!
+//        viewModel.xyh = majorList?.get(0)?.xyh!!
+//        viewModel.position.value?.plus(1)
+//    }
+
+    fun initData() {
+
+        tab_common.setTabAdapter(object : TabAdapter {
+            override fun getIcon(position: Int): TabIcon? {
+                return null
+            }
+
+            override fun getBadge(position: Int): ITabView.TabBadge? {
+                return null
+            }
+
+
+            override fun getBackground(position: Int): Int {
+                return R.drawable.bg_tab_selected
+            }
+
+            override fun getTitle(position: Int): TabTitle {
+                return TabTitle.Builder()
+                    .setTextColor(Color.parseColor("#2894FF"), Color.parseColor("#6C6C6C"))
+                    .setTextSize(14)
+                    .setContent(majorList?.get(position)?.zymc)
+                    .build()
+            }
+
+            override fun getCount(): Int {
+                return majorList?.size!!
+            }
+
+        })
+        tab_common.addOnTabSelectedListener(this)
+    }
+
+
+    fun initView() {
+        with(re_common) {
+            layoutManager = mlayoutManager
+            adapter = viewModel.majorClassList?.let {
+                DetailClassAdapter(
+                    MyApplication.getContext()
+                    , it, viewModel
+                )
+            }
+        }
+    }
+
+
+
+    companion object {
+        fun getInstance(majorList: ArrayList<TimeTableBeans.Data>?): CommentFragment {
+            val fragment =
+                CommentFragment()
+            val bundle = Bundle()
+            bundle.putSerializable("majorList", majorList)
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
+    override fun onTabReselected(tab: TabView?, position: Int) {
+
+    }
+
+    override fun onTabSelected(tab: TabView?, position: Int) {
+
+
+        //更新recyclerView数据
+        viewModel.zyh = majorList?.get(position)?.zyh!!
+        viewModel.xyh = majorList?.get(position)?.xyh!!
+        viewModel.position.value = position
+
+    }
+
+    override fun initViewWithoutData() {
+        binding?.viewModel=viewModel
+        initData()
+        initView()
+    }
+
+    override fun loadDataOnce() {
+        viewModel.zyh = majorList?.get(0)?.zyh!!
+        viewModel.xyh = majorList?.get(0)?.xyh!!
+        viewModel.position.value?.plus(1)
+    }
+
+    override fun getLayoutId(): Int {
+    return R.layout.fragment_comment
+    }
+
+    override fun observe() {
+        viewModel.position.observe(viewLifecycleOwner, Observer {
+            viewModel.getMajorClassList()
+            Log.e("456", "viewModel.getMajorClassList()")
+
+        })
+
+        viewModel.isLoadingFailed.observe(viewLifecycleOwner, Observer {
+            if (it)
+            showLoadErrorView("加载失败"){
+
+            }
+        })
+
+        viewModel.dataChanged.observe(viewLifecycleOwner, Observer {
+            re_common.adapter?.notifyDataSetChanged()
+        })
+
+        viewModel.isSecleted.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                startActivity<DetailClassActivity>(Pair("major", viewModel.slectedData))
+                viewModel.isSecleted.value = false
+            }
+
+        })
+
+    }
+
+}
+

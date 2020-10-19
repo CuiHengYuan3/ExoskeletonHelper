@@ -1,0 +1,27 @@
+关于任何一个需要加载网络数据的fragment或者activity都要这样布局
+
+顶层一个FrameLayout,中间加自己的LineLayout或者ContrainLayout
+最下面include两个布局，一个loading,一个error
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+    <include layout="@layout/layout_loading" />
+
+    <include layout="@layout/layout_view_stub_holder" />
+
+</FrameLayout>

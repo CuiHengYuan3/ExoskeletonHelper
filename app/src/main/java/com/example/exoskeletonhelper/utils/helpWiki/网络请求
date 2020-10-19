@@ -1,0 +1,226 @@
+interface DetailClassService {
+
+
+    @GET("sys/mooc/getMoocResources")
+    suspend fun getMp4ResourcesById(@Query("courseId") courseId: String, @Query("type") type: String):DetailClassMp4Beans
+
+    @GET("sys/mooc/getMoocResources")
+    suspend fun getPdfResourcesById(@Query("courseId") courseId: String, @Query("type") type: String):DetialClassPdfBeans
+
+
+    @GET("sys/moren-kc/getResourceByKcbh")
+    suspend fun getPdfResourcesByType(@Query("kcbh") kcbh: String, @Query("type") type: String):PdfResourceBean
+
+}
+
+
+package com.example.databasecompetition
+
+import com.example.databasecompetition.detailClass.DetailClassService
+import com.example.databasecompetition.home.search.SearchService
+import com.example.databasecompetition.others.OthersService
+import com.example.databasecompetition.timetable.TimeTableService
+
+class Network private constructor() {
+
+
+    private val retrofit =
+        RetrofitUtil.getRetrofitBuilder("https://www.p3wj.top/", true)
+            .build()
+
+    private val timetableService = retrofit.create(TimeTableService::class.java)
+
+    private val detailClassService = retrofit.create(DetailClassService::class.java)
+
+    private val moocSearchService = retrofit.create(SearchService::class.java)
+
+    private val searchService = retrofit.create(SearchService::class.java)
+
+    private val othersService = retrofit.create(OthersService::class.java)
+
+    suspend fun getInstituteMajor() = timetableService.getInstituteMajor()
+
+    suspend fun getMajorByZyh(zyh: String, xyh: String) = timetableService.getMajorByZyh(zyh, xyh)
+
+    suspend fun getMp4Resources(courseId: String) =
+        detailClassService.getMp4ResourcesById(courseId, "mp4")
+
+    suspend fun getPdfResources(courseId: String) =
+        detailClassService.getPdfResourcesById(courseId, "pdf")
+
+    suspend fun getPdfResoucesByType(kcbh: String, type: String) =
+        detailClassService.getPdfResourcesByType(kcbh, type)
+
+    suspend fun getMoocResoucesByName(name: String) = moocSearchService.getMoocSource(name)
+
+    suspend fun getSearchTimeTable(page: Int) = searchService.getMoocTimeTable(page)
+
+    suspend fun getCateGory(resource: String) = othersService.getCatagory(resource)
+
+    suspend fun getWebCourese(category: String, page: Int, resource: String) =
+        othersService.getWebCourse(category, page, resource)
+
+
+    companion object {
+        private var network: Network? = null
+
+        fun getInstance(): Network? {
+            if (network == null) {
+                synchronized(this::class.java) {
+                    network = Network()
+                }
+            }
+            return network
+        }
+
+
+    }
+
+
+}
+
+
+class PagerAdapter(private val fragmentList: List<Fragment>, fragmentManager: FragmentManager) :
+    FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
+    override fun getItem(position: Int): Fragment {
+        return fragmentList[position]
+    }
+
+    override fun getCount(): Int {
+        return fragmentList.size
+    }
+
+    override fun destroyItem(container: ViewGroup, position: Int, any: Any) {
+
+    }
+
+
+    override fun getPageTitle(position: Int): CharSequence? {
+        return super.getPageTitle(position)
+
+    }
+}
+
+
+interface OnItemCilckListener {
+
+    fun onItemCilck(view: View, position: Int)
+
+}
+
+
+const val TYPE_ITEM = 3
+const val TYPE_FOOTER = 4
+
+
+@BindingAdapter("bind:loadPic")
+fun ImageView.loadBingPic(url: String? ) {
+    url?.let {
+        Glide.with(MyApplication.getContext()).load(url).skipMemoryCache(false).error(R.mipmap.ic_consoult_placeholder).timeout(1000000000)
+            .placeholder(R.mipmap.ic_consoult_placeholder).into(this)
+    }
+
+
+}
+
+abstract class BaseViewHolder<T: ViewDataBinding>(
+    val binding: T,
+    private val listener: OnItemCilckListener? = null
+) :
+    RecyclerView.ViewHolder(binding.root) {
+
+    init {
+        listener?.let {
+            binding.root.setOnClickListener {
+                val position = adapterPosition
+                listener.onItemCilck(it, position)
+            }
+        }
+
+
+    }
+
+}
+
+
+object RetrofitUtil {
+
+    private fun getOkHttpClientBuilder(
+        needToken: Boolean,
+        tokenInterceptor: Interceptor? = null
+    ): OkHttpClient.Builder {
+        //超时时间
+        val defaultTimeout = 10L
+        //OkHttp日志拦截器
+        val loggingInterceptor = HttpLoggingInterceptor {
+            try {
+                Log.e("OkHttp------", it)
+            } catch (e: UnsupportedEncodingException) {
+                Log.e("OkHttp------", it)
+            }
+        }
+        //日志等级
+        // BASIC 请求/响应行
+        // HEADER 请求/响应行 + 头
+        // BODY 请求/响应行 + 头 + 体
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
+        //缓存设置
+        val cacheFile = File(MyApplication.getContext().cacheDir, "cache")
+        val cache = Cache(cacheFile, 1024 * 1024 * 100)//100MB
+        val builder = OkHttpClient.Builder()
+            .callTimeout(defaultTimeout, TimeUnit.SECONDS)
+            .connectTimeout(defaultTimeout, TimeUnit.SECONDS)
+            .readTimeout(defaultTimeout, TimeUnit.SECONDS)
+            .writeTimeout(defaultTimeout, TimeUnit.SECONDS)
+            .addInterceptor(loggingInterceptor)
+            .cache(cache)
+        if (needToken) {
+        Log.e("token","needToken")
+
+            builder.addInterceptor(TokenInterceptor())
+
+        }
+        if (tokenInterceptor != null) {
+            builder.addInterceptor(tokenInterceptor)
+        }
+        return builder
+    }
+
+    fun getRetrofitBuilder(
+        baseUrl: String,
+        needToken: Boolean,
+        tokenInterceptor: Interceptor? = null
+    ): Retrofit.Builder {
+        val gson = GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").serializeNulls().create()
+        val okHttpClient = getOkHttpClientBuilder(needToken, tokenInterceptor).build()
+        return Retrofit.Builder()
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .baseUrl(baseUrl)
+    }
+
+
+}
+
+class TokenInterceptor : Interceptor {
+
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val token = MyApplication.getToken()
+        return if (token.isNullOrEmpty()) {
+            val originalRequest = chain.request()
+            chain.proceed(originalRequest)
+        } else {
+            val originalRequest = chain.request()
+            val updateRequest =
+                originalRequest.newBuilder()
+                    .header("Authorization", "Bearer "+token)
+                    .addHeader("Connection", "keep-alive")
+                    .build()
+            chain.proceed(updateRequest)
+        }
+    }
+
+}

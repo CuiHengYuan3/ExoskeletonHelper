@@ -1,0 +1,52 @@
+InjectorUtil（注射器工具，各种viewModel的工厂，统一管理）
+
+
+
+
+
+这就是创建所有的viewModel的工厂工具类，里面有所有的工厂
+
+
+
+object就是对象声明，用object定义类，那么这个类的唯一对象（实例）就创建好了，object关键字把类声明和对象声明放在了一起
+
+
+/**
+ * 应用程序逻辑控制管理类。
+ *
+ * @author vipyinzhiwei
+ * @since  2020/5/2
+ */
+object InjectorUtil {
+
+    private fun getMainPageRepository() = MainPageRepository.getInstance(EyepetizerDatabase.getMainPageDao(), EyepetizerNetwork.getInstance())
+
+    private fun getViedoRepository() = VideoRepository.getInstance(EyepetizerDatabase.getVideoDao(), EyepetizerNetwork.getInstance())
+
+    fun getDiscoveryViewModelFactory() = DiscoveryViewModelFactory(getMainPageRepository())
+
+    fun getHomePageCommendViewModelFactory() = com.eyepetizer.android.ui.home.commend.CommendViewModelFactory(getMainPageRepository())
+
+    fun getDailyViewModelFactory() = DailyViewModelFactory(getMainPageRepository())
+
+    fun getCommunityCommendViewModelFactory() = com.eyepetizer.android.ui.community.commend.CommendViewModelFactory(getMainPageRepository())
+
+    fun getFollowViewModelFactory() = FollowViewModelFactory(getMainPageRepository())
+
+    fun getPushViewModelFactory() = PushViewModelFactory(getMainPageRepository())
+
+    fun getSearchViewModelFactory() = SearchViewModelFactory(getMainPageRepository())
+
+    fun getNewDetailViewModelFactory() = NewDetailViewModelFactory(getViedoRepository())
+
+}
+
+比如任意的一个工厂
+
+class DailyViewModelFactory(private val repository: MainPageRepository) : ViewModelProvider.NewInstanceFactory() {
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return DailyViewModel(repository) as T
+    }
+}
